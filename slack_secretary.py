@@ -5,8 +5,8 @@ from slackclient import SlackClient
 
 SLACK_BOT_TOKEN = os.environ.get('SLACK_BOT_TOKEN')
 slack_client = SlackClient(SLACK_BOT_TOKEN)
-BOT_NAME = 'echooooo'
-
+BOT_NAME = os.environ.get('SLACK_BOT_NAME')
+print BOT_NAME
 def get_bot_id():
 	api_call = slack_client.api_call('users.list')
 	if 'ok' in api_call:
