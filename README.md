@@ -1,6 +1,7 @@
 # slack_secretary
 [SETTING]  
 pip install slackclient  
+export SLACK_BOT_TOKEN='slack bot token'
 
 [INFO]  
 Slack Bot User API  
