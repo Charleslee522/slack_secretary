@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import os
 import time
+import requests
 
 from slackclient import SlackClient
 
@@ -7,6 +10,7 @@ SLACK_BOT_TOKEN = os.environ.get('SLACK_BOT_TOKEN')
 slack_client = SlackClient(SLACK_BOT_TOKEN)
 BOT_NAME = os.environ.get('SLACK_BOT_NAME')
 print BOT_NAME
+print SLACK_BOT_TOKEN
 def get_bot_id():
 	api_call = slack_client.api_call('users.list')
 	if 'ok' in api_call:
@@ -28,7 +32,14 @@ def parse_command(read_obj, prefix):
 	return None, None
 
 def handle_command(command, channel):
-	slack_client.api_call('chat.postMessage', text = command, channel=channel, as_user=True)
+	if command == None:
+		return
+	if command.lower().startswith('market price'):
+		r = requests.get('https://api.korbit.co.kr/v1/ticker/detailed')
+		price_str = '비트코인 가격은 현재 {} 원 입니다. '.format(r['last'])
+		slack_client.api_call('chat.postMessage', text = price_str, channel=channel, as_user=True)
+	else:
+		slack_client.api_call('chat.postMessage', text = command, channel=channel, as_user=True)
 
 if __name__ == '__main__':
 	prefix = "<@" + get_bot_id() + ">"
