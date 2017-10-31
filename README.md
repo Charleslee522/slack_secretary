@@ -2,6 +2,7 @@
 [SETTING]  
 pip install slackclient  
 export SLACK_BOT_TOKEN='slack bot token'
+export SLACK_BOT_NAME='slack bot name'
 
 [INFO]  
 Slack Bot User API  
