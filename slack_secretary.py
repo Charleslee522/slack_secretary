@@ -34,9 +34,12 @@ def parse_command(read_obj, prefix):
 def handle_command(command, channel):
 	if command == None:
 		return
-	if command.lower().startswith('market price'):
-		r = requests.get('https://api.korbit.co.kr/v1/ticker/detailed')
-		price_str = '비트코인 가격은 현재 {} 원 입니다. '.format(r['last'])
+	#if command.lower().startswith('market price'):
+	print command
+	if command.lower().find('bitcoin') > -1 and command.lower().find('price') > -1:
+		res = requests.get('https://api.korbit.co.kr/v1/ticker/detailed')
+		obj = res.json()
+		price_str = u'비트코인 가격은 현재 {} 원 입니다. '.format(obj['last'])
 		slack_client.api_call('chat.postMessage', text = price_str, channel=channel, as_user=True)
 	else:
 		slack_client.api_call('chat.postMessage', text = command, channel=channel, as_user=True)
