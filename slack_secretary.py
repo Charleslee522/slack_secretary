@@ -3,6 +3,7 @@
 import os
 import time
 import requests
+import re
 
 from slackclient import SlackClient
 
@@ -11,6 +12,7 @@ slack_client = SlackClient(SLACK_BOT_TOKEN)
 BOT_NAME = os.environ.get('SLACK_BOT_NAME')
 print BOT_NAME
 print SLACK_BOT_TOKEN
+
 def get_bot_id():
 	api_call = slack_client.api_call('users.list')
 	if 'ok' in api_call:
@@ -74,18 +76,24 @@ def handle_command(command, channel):
 		if url == None:
                     slack_client.api_call('chat.postMessage', text = u'코인 이름을 말씀해주세요( 예. 보스코인 가격 얼마야? 비트코인 시세 알려줘:) )', channel=channel, as_user=True)
 		    return
+
+                obj = requests.get(url).json()
+
+                #p = re.compile('([0-9,]+)\w+' + coin_name)
+                #m = p.match(refined_cmd)
+                #count = 1
+                #if m:
+                #    print m.group(1)
+                #    count = int(m.group(1))
+
                 if coin_name == u'보스' or coin_name == 'bos':
-                    res = requests.get(url)
-                    obj = res.json()
                     btc2krw = get_btc_to_krw()
                     bos2btc = obj["data"]["CSPA:BOS/BTC"]["cspa"]
                     bos2krw = float(btc2krw) * float(bos2btc)
-                    price_str = u'HitBTC 기준, {} 가격은 현재 {} 원, {} BTC 입니다. '.format('BOS', str(bos2krw), bos2btc)
+                    price_str = u'HitBTC 기준, {} {} 가격은 현재 {} 원, {} BTC 입니다. '.format('1', 'BOS', str(bos2krw), bos2btc)
 		    slack_client.api_call('chat.postMessage', text = price_str, channel=channel, as_user=True)
                 else:
-		    res = requests.get(url)
-		    obj = res.json()
-		    price_str = u'코빗 기준, {} 가격은 현재 {} 원 입니다. '.format(coin_name, obj['last'])
+		    price_str = u'코빗 기준, {} {} 가격은 현재 {} 원 입니다. '.format('1', coin_name, obj['last'])
 		    slack_client.api_call('chat.postMessage', text = price_str, channel=channel, as_user=True)
 	else:
 		slack_client.api_call('chat.postMessage', text = command, channel=channel, as_user=True)
